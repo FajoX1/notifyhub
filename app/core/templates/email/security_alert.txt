@@ -1,0 +1,10 @@
+NotifyHub: предупреждение безопасности
+
+Зафиксирован вход в ваш аккаунт{% if username %} {{ username }}{% endif %}.
+
+Время: {{ login_time }}
+IP: {{ ip_address }}
+Устройство: {{ user_agent }}
+
+Если это были не вы, срочно смените пароль:
+{{ security_url }}

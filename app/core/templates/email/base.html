@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>{% block title %}{{ subject|default:"NotifyHub" }}{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f4f4f5;
+        }
+    
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+    
+        td {
+            padding: 0;
+        }
+    
+        img {
+            border: 0;
+            display: block;
+        }
+    
+        .wrapper {
+            width: 100%;
+            background: #f4f4f5;
+            padding: 28px 16px;
+        }
+    
+        .card {
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #e4e4e7;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+    
+        .header {
+            padding: 28px 32px 24px;
+            background: linear-gradient(135deg, #4338ca 0%, #2563eb 52%, #0891b2 100%);
+            color: #ffffff;
+        }
+    
+        .brand {
+            margin: 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: 26px;
+            line-height: 30px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+    
+        .subtitle {
+            margin: 8px 0 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+            color: rgba(255, 255, 255, 0.88);
+        }
+    
+        .content {
+            padding: 30px 32px;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            color: #27272a;
+        }
+    
+        .email-title {
+            margin: 0 0 14px;
+            font-size: 24px;
+            line-height: 30px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #18181b;
+        }
+    
+        .email-text {
+            margin: 0 0 14px;
+            font-size: 15px;
+            line-height: 24px;
+            color: #3f3f46;
+        }
+    
+        .panel {
+            margin: 20px 0;
+            border: 1px solid #e4e4e7;
+            border-radius: 14px;
+            background: #fafafa;
+            padding: 16px;
+        }
+    
+        .panel-title {
+            margin: 0 0 6px;
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 600;
+            color: #27272a;
+        }
+    
+        .panel-text {
+            margin: 0;
+            font-size: 14px;
+            line-height: 21px;
+            color: #3f3f46;
+        }
+    
+        .panel.info {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+    
+        .panel.warning {
+            background: #fffbeb;
+            border-color: #fcd34d;
+        }
+    
+        .panel.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+    
+        .btn-wrap {
+            margin: 24px 0 4px;
+        }
+    
+        .btn {
+            display: inline-block;
+            border-radius: 12px;
+            padding: 12px 22px;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 18px;
+            font-weight: 600;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+    
+        .btn-primary {
+            background: #18181b;
+            color: #ffffff;
+        }
+    
+        .btn-secondary {
+            background: #f4f4f5;
+            color: #27272a;
+            border: 1px solid #e4e4e7;
+        }
+    
+        .code {
+            margin: 14px 0 18px;
+            border-radius: 14px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            padding: 16px;
+            text-align: center;
+            font-size: 30px;
+            line-height: 34px;
+            letter-spacing: 0.28em;
+            font-weight: 700;
+            color: #0f172a;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        }
+    
+        .meta {
+            margin: 8px 0 0;
+            font-size: 13px;
+            line-height: 18px;
+            color: #52525b;
+        }
+    
+        .footer {
+            padding: 22px 32px 28px;
+            border-top: 1px solid #e4e4e7;
+            background: #fafafa;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+    
+        .footer p {
+            margin: 0 0 10px;
+            font-size: 12px;
+            line-height: 18px;
+            color: #71717a;
+        }
+    
+        .footer a {
+            color: #4338ca;
+            text-decoration: none;
+        }
+    
+        .footer-links a {
+            margin-right: 12px;
+            white-space: nowrap;
+        }
+    
+        @media only screen and (max-width: 640px) {
+            .wrapper {
+                padding: 12px;
+            }
+    
+            .header,
+            .content,
+            .footer {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+    
+            .email-title {
+                font-size: 21px;
+                line-height: 27px;
+            }
+    
+            .code {
+                font-size: 24px;
+                line-height: 30px;
+                letter-spacing: 0.2em;
+            }
+    
+            .btn {
+                display: block;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    
+        @media (prefers-color-scheme: dark) {
+    
+            body,
+            .wrapper {
+                background: #09090b !important;
+            }
+    
+            .card {
+                background: #18181b !important;
+                border-color: #3f3f46 !important;
+            }
+    
+            .content {
+                color: #e4e4e7 !important;
+            }
+    
+            .email-title {
+                color: #fafafa !important;
+            }
+    
+            .email-text {
+                color: #d4d4d8 !important;
+            }
+    
+            .panel {
+                background: #27272a !important;
+                border-color: #3f3f46 !important;
+            }
+    
+            .panel-title,
+            .panel-text {
+                color: #e4e4e7 !important;
+            }
+    
+            .panel.info {
+                background: #1e293b !important;
+                border-color: #334155 !important;
+            }
+    
+            .panel.warning {
+                background: #3f2f11 !important;
+                border-color: #7c5d18 !important;
+            }
+    
+            .panel.error {
+                background: #3f1d25 !important;
+                border-color: #7f1d1d !important;
+            }
+    
+            .btn-primary {
+                background: #ffffff !important;
+                color: #111827 !important;
+            }
+    
+            .btn-secondary {
+                background: #27272a !important;
+                color: #fafafa !important;
+                border-color: #3f3f46 !important;
+            }
+    
+            .code {
+                background: #111827 !important;
+                border-color: #374151 !important;
+                color: #e5e7eb !important;
+            }
+    
+            .meta {
+                color: #a1a1aa !important;
+            }
+    
+            .footer {
+                background: #111111 !important;
+                border-color: #27272a !important;
+            }
+    
+            .footer p {
+                color: #a1a1aa !important;
+            }
+    
+            .footer a {
+                color: #93c5fd !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <table role="presentation" width="100%">
+        <tr>
+            <td align="center">
+                <table role="presentation" class="card" width="100%">
+                    <tr>
+                        <td class="header">
+                            <h1 class="brand">NotifyHub</h1>
+                            <p class="subtitle">Уведомления, безопасность и контроль в одном месте</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">
+                            {% block content %}{% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer">
+                            <p>&copy; {% now "Y" %} NotifyHub</p>
+                            <p class="footer-links">
+                                <a href="{{ site_url }}/">Сайт</a>
+                                <a href="{{ site_url }}/dashboard/">Кабинет</a>
+                                <a href="{{ site_url }}/settings/">Настройки</a>
+                            </p>
+                            <p>Это автоматическое письмо, отвечать на него не нужно.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Создать аккаунт | NotifyHub{% endblock %}
+
+{% block content %}
+
+<section class="auth-page-card mx-auto w-full max-w-md rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xl ring-1 ring-black/[0.04] dark:border-white/10 dark:bg-zinc-900 dark:shadow-soft-dark dark:ring-white/10 sm:p-10">
+    <div class="text-center text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">NotifyHub</div>
+    <h1 class="mt-5 text-center text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-[1.65rem]">Создать аккаунт</h1>
+    <p class="mt-2 text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Заполните поля ниже — письмо с подтверждением придёт, если так настроено в проекте.</p>
+
+    {% if form.non_field_errors %}
+        <div class="mt-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200" role="alert">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'account_signup' %}" class="auth-form-fields mt-8 space-y-5">
+        {% csrf_token %}
+        {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+        {% for field in form.visible_fields %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="helptext mt-1.5 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400 [&_ul]:m-0 [&_ul]:list-none [&_ul]:p-0 [&_li]:flex [&_li]:items-start [&_li]:gap-1 [&_li]:before:mr-1 [&_li]:before:content-['—'] [&_li]:before:shrink-0">
+                        {{ field.help_text|safe }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {{ redirect_field }}
+        <button type="submit" class="btn btn-primary mt-2 h-12 w-full text-base font-semibold">Зарегистрироваться</button>
+    </form>
+
+    {% include "partials/google_signin.html" %}
+
+    <p class="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+        Уже есть аккаунт?
+        <a class="font-medium text-indigo-600 underline-offset-2 transition hover:text-indigo-500 hover:underline dark:text-sky-400 dark:hover:text-sky-300" href="{% url 'account_login' %}">Войти</a>
+    </p>
+</section>
+
+{% endblock %}

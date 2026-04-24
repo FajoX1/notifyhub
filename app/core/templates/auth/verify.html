@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Подтверждение | NotifyHub{% endblock %}
+
+{% block content %}
+
+<section class="auth-page-card mx-auto w-full max-w-md rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xl ring-1 ring-black/[0.04] dark:border-white/10 dark:bg-zinc-900 dark:shadow-soft-dark dark:ring-white/10 sm:p-10">
+    <div class="text-center text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">NotifyHub</div>
+    <h1 class="mt-5 text-center text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-[1.65rem]">Проверьте почту</h1>
+    <p class="mt-2 text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Код отправлен на <strong class="font-medium text-zinc-900 dark:text-zinc-100">{{ email }}</strong></p>
+
+    <form method="post" class="auth-form-fields mt-8 space-y-5">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+        <div class="space-y-2">
+            <label class="!mb-0" for="code">Код из письма</label>
+            <input id="code" name="code" type="text" required minlength="6" maxlength="6" placeholder="000000" class="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 font-mono text-lg tracking-[0.25em] text-zinc-900 shadow-sm outline-none transition duration-200 placeholder:tracking-normal placeholder:text-zinc-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-sky-400 dark:focus:ring-sky-400/25">
+        </div>
+        {% if error %}
+            <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200" role="alert">{{ error }}</div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary mt-2 h-12 w-full text-base font-semibold">Войти</button>
+    </form>
+    <a class="mt-6 block text-center text-sm font-medium text-indigo-600 transition hover:text-indigo-500 dark:text-sky-400 dark:hover:text-sky-300" href="{% url 'account_login' %}">Указать другую почту</a>
+</section>
+
+{% endblock %}

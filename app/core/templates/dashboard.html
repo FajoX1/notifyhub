@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Главная | NotifyHub{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200" role="alert">{{ error }}</div>
+{% endif %}
+
+<section class="relative overflow-hidden rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-soft ring-1 ring-black/[0.04] dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-soft-dark dark:ring-white/10 sm:p-8">
+    <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-500/10 to-sky-400/5 blur-2xl dark:from-indigo-500/15 dark:to-sky-400/10" aria-hidden="true"></div>
+    <div class="relative">
+        <p class="text-xs font-medium uppercase tracking-wider text-indigo-600 dark:text-sky-400">NotifyHub</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">Система уведомлений</h1>
+        <p class="mt-4 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">Управляйте уведомлениями и получайте важные обновления в реальном времени — в том же стиле, что и вход в сервис.</p>
+    </div>
+</section>
+
+<section class="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6">
+    <article class="flex flex-col rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-sm ring-1 ring-black/[0.03] transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:ring-white/[0.06] dark:shadow-soft-dark sm:p-6">
+        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Центр уведомлений</h2>
+        <p class="mt-2 flex-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Открывайте список, отмечайте прочитанными и удаляйте неактуальные события.</p>
+        <a class="btn btn-primary mt-6 w-full sm:mt-8 sm:w-auto" href="{% url 'notifications' %}">Перейти к уведомлениям</a>
+    </article>
+    <article class="flex flex-col rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-sm ring-1 ring-black/[0.03] transition-shadow hover:shadow-md dark:border-white/10 dark:bg-zinc-900/50 dark:ring-white/[0.06] dark:shadow-soft-dark sm:p-6">
+        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Мгновенные уведомления</h2>
+        <p class="mt-2 flex-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Новые события прилетают по WebSocket; тяжёлая работа уходит в Celery и не блокирует страницу.</p>
+        <p class="mt-4 rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-xs leading-relaxed text-zinc-600 dark:border-white/5 dark:bg-white/[0.03] dark:text-zinc-400">Оставьте вкладку открытой — лента и счётчик обновятся сами.</p>
+    </article>
+</section>
+
+<section class="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-sm ring-1 ring-black/[0.03] dark:border-white/10 dark:bg-zinc-900/50 dark:ring-white/[0.06] dark:shadow-soft-dark sm:mt-10 sm:p-6">
+    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Последние уведомления</h2>
+    <div class="notification-list mt-4 flex min-w-0 flex-col gap-4" id="latest-notification-list">
+        {% for notification in notifications %}
+            {% include "partials/notification_card.html" with notification=notification show_read_button=False %}
+        {% empty %}
+            <p class="empty rounded-xl border border-dashed border-zinc-200 py-10 text-sm dark:border-white/10">Пока уведомлений нет.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

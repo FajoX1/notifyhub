@@ -1,0 +1,16 @@
+{% extends "email/base.html" %}
+{% block title %}Добро пожаловать{% endblock %}
+
+{% block content %}
+
+<h1 class="email-title">Добро пожаловать{% if username %}, {{ username }}{% endif %}!</h1>
+<p class="email-text">Ваш аккаунт NotifyHub успешно создан. Можно сразу перейти в личный кабинет и настроить каналы уведомлений.</p>
+<div class="btn-wrap">
+    <a class="btn btn-primary" href="{{ login_url }}">Перейти в аккаунт</a>
+</div>
+<div class="panel info">
+    <p class="panel-title">Почта для входа</p>
+    <p class="panel-text">{{ email }}</p>
+</div>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки | NotifyHub{% endblock %}
+
+{% block content %}
+
+<section class="mx-auto max-w-3xl pb-6 sm:pb-8">
+    <h1 class="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">Настройки</h1>
+    <p class="mt-3 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-base">Управляйте каналами доставки и типами уведомлений.</p>
+</section>
+
+<section class="panel panel-dnd mb-6 rounded-xl border border-zinc-200/90 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-soft-dark sm:p-6">
+    <div class="panel-head flex flex-col gap-4 border-b border-zinc-100 pb-5 dark:border-white/10 sm:flex-row sm:items-start sm:justify-between">
+        <div class="min-w-0">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Режим &quot;Не беспокоить&quot;</h2>
+            <p class="panel-sub mt-1">Настройте время, когда не хотите получать уведомления</p>
+        </div>
+        <div class="panel-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400" aria-hidden="true">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 9.5v5c0 .55.45 1 1 1h3.2l4.7 3.6c.66.5 1.6.03 1.6-.8V5.7c0-.83-.94-1.3-1.6-.8L8.2 8.5H5c-.55 0-1 .45-1 1Z" opacity=".35"/>
+                <path d="M17.5 7.7a1 1 0 0 1 1.4.1 8 8 0 0 1 0 8.4 1 1 0 1 1-1.6-1.2 6 6 0 0 0 0-6.8 1 1 0 0 1 .2-1.3Z"/>
+            </svg>
+        </div>
+    </div>
+    <div class="settings-row mt-5">
+        <div class="min-w-0 pr-4">
+            <strong class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Полный мут</strong>
+            <div class="muted mt-0.5 text-xs sm:text-sm">Отключить все уведомления независимо от времени</div>
+        </div>
+        <button class="switch {% if preferences.mute_all_enabled %}on{% endif %} mt-3 shrink-0 sm:mt-0" type="button" data-pref="mute_all_enabled" data-on="{% if preferences.mute_all_enabled %}true{% else %}false{% endif %}" aria-label="Переключить полный мут"></button>
+    </div>
+    <div class="settings-row mt-3">
+        <div class="min-w-0 pr-4">
+            <strong class="text-sm font-medium text-zinc-900 dark:text-zinc-100">Включить режим</strong>
+            <div class="muted mt-0.5 text-xs sm:text-sm">Отключить все уведомления в указанное время</div>
+        </div>
+        <button class="switch {% if preferences.dnd_enabled %}on{% endif %} mt-3 shrink-0 sm:mt-0" type="button" data-pref="dnd_enabled" data-on="{% if preferences.dnd_enabled %}true{% else %}false{% endif %}" aria-label="Переключить режим Не беспокоить"></button>
+    </div>
+    <div class="dnd-grid mt-5 grid gap-3 sm:grid-cols-2">
+        <div class="dnd-field flex flex-col gap-1.5">
+            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400" for="dnd-start">Начало</label>
+            <input id="dnd-start" class="rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-sky-500 dark:focus:ring-sky-500/20" type="time" value="{% if preferences.dnd_start %}{{ preferences.dnd_start|time:'H:i' }}{% endif %}">
+        </div>
+        <div class="dnd-field flex flex-col gap-1.5">
+            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400" for="dnd-end">Конец</label>
+            <input id="dnd-end" class="rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 dark:border-white/10 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-sky-500 dark:focus:ring-sky-500/20" type="time" value="{% if preferences.dnd_end %}{{ preferences.dnd_end|time:'H:i' }}{% endif %}">
+        </div>
+    </div>
+</section>
+
+<section class="panel mb-6 rounded-xl border border-zinc-200/90 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-soft-dark sm:p-6">
+    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Типы уведомлений</h2>
+    <div class="mt-5 flex flex-col gap-3">
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Платежи и транзакции</span>
+            <button class="switch {% if preferences.payments_enabled %}on{% endif %}" type="button" data-pref="payments_enabled" data-on="{% if preferences.payments_enabled %}true{% else %}false{% endif %}" aria-label="Платежи и транзакции"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Сообщения</span>
+            <button class="switch {% if preferences.messages_enabled %}on{% endif %}" type="button" data-pref="messages_enabled" data-on="{% if preferences.messages_enabled %}true{% else %}false{% endif %}" aria-label="Сообщения"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Обновления системы</span>
+            <button class="switch {% if preferences.system_enabled %}on{% endif %}" type="button" data-pref="system_enabled" data-on="{% if preferences.system_enabled %}true{% else %}false{% endif %}" aria-label="Обновления системы"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Маркетинг и акции</span>
+            <button class="switch {% if preferences.marketing_enabled %}on{% endif %}" type="button" data-pref="marketing_enabled" data-on="{% if preferences.marketing_enabled %}true{% else %}false{% endif %}" aria-label="Маркетинг и акции"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Безопасность аккаунта</span>
+            <button class="switch {% if preferences.security_enabled %}on{% endif %}" type="button" data-pref="security_enabled" data-on="{% if preferences.security_enabled %}true{% else %}false{% endif %}" aria-label="Безопасность аккаунта"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Поддержка и сервис</span>
+            <button class="switch {% if preferences.support_enabled %}on{% endif %}" type="button" data-pref="support_enabled" data-on="{% if preferences.support_enabled %}true{% else %}false{% endif %}" aria-label="Поддержка и сервис"></button>
+        </div>
+    </div>
+</section>
+
+<section class="panel rounded-xl border border-zinc-200/90 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/50 dark:shadow-soft-dark sm:p-6">
+    <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Каналы доставки</h2>
+    <div class="mt-5 flex flex-col gap-3">
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Email уведомления</span>
+            <button class="switch {% if preferences.email_enabled %}on{% endif %}" type="button" data-pref="email_enabled" data-on="{% if preferences.email_enabled %}true{% else %}false{% endif %}" aria-label="Email уведомления"></button>
+        </div>
+        <div class="settings-row">
+            <span class="text-sm text-zinc-800 dark:text-zinc-200">Browser уведомления</span>
+            <button class="switch {% if preferences.browser_enabled %}on{% endif %}" type="button" data-pref="browser_enabled" data-on="{% if preferences.browser_enabled %}true{% else %}false{% endif %}" aria-label="Browser уведомления"></button>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

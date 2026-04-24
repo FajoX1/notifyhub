@@ -1,0 +1,12 @@
+version = 1
+revision = 3
+requires-python = ">=3.11"
+resolution-markers = [
+    "python_full_version >= '3.15'",
+    "python_full_version < '3.15'",
+]
+
+[[package]]
+name = "notifyhub"
+version = "1.0.0"
+source = { editable = "." }

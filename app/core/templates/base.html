@@ -1,0 +1,578 @@
+{% load static %}
+{% load notifyhub_extras %}
+
+<!DOCTYPE html>
+<html lang="ru" class="h-full scroll-smooth {% block html_class %}{% endblock %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NotifyHub{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities/core.css' %}">
+    <style>
+        .toast-stack {
+            max-width: min(100vw - 2rem, 26rem);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .toast {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            min-width: min(100vw - 2rem, 21rem);
+            box-sizing: border-box;
+            border-radius: 1rem;
+            border: 1px solid rgba(228, 228, 231, 0.9);
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+        .toast-inner {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 0.9rem 1rem;
+        }
+        .dark .toast {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(24, 24, 27, 0.86);
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+        }
+        .nh-toast-head {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+        .nh-toast-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            min-width: 0;
+        }
+        .nh-toast-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            min-width: 0;
+        }
+        .nh-toast-meta > span {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .nh-toast-meta svg {
+            width: 0.85rem;
+            height: 0.85rem;
+            flex-shrink: 0;
+        }
+        .nh-toast-meta .truncate {
+            min-width: 0;
+            max-width: 10rem;
+        }
+        .nh-toast-title,
+        .nh-toast-msg {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .nh-toast-title {
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+        .nh-toast-msg {
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            margin-top: 0.15rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        .nh-notif-badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            margin-bottom: 0.375rem;
+            min-width: 0;
+        }
+        .nh-notif-badge-row > span {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .nh-notif-badge-row svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            flex-shrink: 0;
+        }
+        .dark .notif-pagination {
+            background-color: rgba(24, 24, 27, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: rgb(228, 228, 231) !important;
+        }
+        .dark .notif-page-btn {
+            background-color: rgba(39, 39, 42, 1) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: rgb(228, 228, 231) !important;
+        }
+        .dark .notif-page-btn:hover {
+            background-color: rgba(63, 63, 70, 1) !important;
+        }
+        .notification-item,
+        .notif-card {
+            display: block;
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .notification-list,
+        #notification-list,
+        #latest-notification-list {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .notification-item .nh-notif-shell,
+        .notif-card .nh-notif-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .notification-item .nh-notif-left,
+        .notif-card .nh-notif-left {
+            display: grid;
+            grid-template-columns: 2.5rem minmax(0, 1fr);
+            align-items: start;
+            gap: 0.8rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .nh-notif-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            border-radius: 0.75rem;
+            overflow: visible;
+        }
+        .nh-notif-icon svg,
+        .nh-toast-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            flex-shrink: 0;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .notification-item .nh-notif-body,
+        .notif-card .nh-notif-body {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .notification-item .nh-notif-title,
+        .notification-item .nh-notif-msg,
+        .notif-card .nh-notif-title,
+        .notif-card .nh-notif-msg {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .nh-notif-title {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
+        }
+        .nh-notif-msg {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            overflow: hidden;
+        }
+        .toast .nh-toast-row {
+            display: grid;
+            grid-template-columns: 2rem minmax(0, 1fr);
+            align-items: start;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .nh-toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            min-width: 2rem;
+            min-height: 2rem;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .toast .nh-toast-text {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .nh-notif-badge-row .truncate {
+            min-width: 0;
+            max-width: 11rem;
+        }
+        .nh-toast-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            flex-shrink: 0;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(228, 228, 231, 0.95);
+            background: rgba(255, 255, 255, 0.75);
+            color: rgb(82, 82, 91);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .nh-toast-close:hover {
+            background: rgba(244, 244, 245, 0.95);
+            color: rgb(24, 24, 27);
+        }
+        .nh-toast-close svg {
+            width: 0.9rem;
+            height: 0.9rem;
+        }
+        .dark .nh-toast-close {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(39, 39, 42, 0.7);
+            color: rgb(212, 212, 216);
+        }
+        .dark .nh-toast-close:hover {
+            background: rgba(63, 63, 70, 0.8);
+            color: rgb(250, 250, 250);
+        }
+        .toast.level-success {
+            border-left: 3px solid #10b981;
+            background-image: linear-gradient(
+                135deg,
+                rgba(16, 185, 129, 0.08) 0%,
+                rgba(255, 255, 255, 0.88) 45%
+            );
+        }
+        .toast.level-warning {
+            border-left: 3px solid #f59e0b;
+            background-image: linear-gradient(
+                135deg,
+                rgba(245, 158, 11, 0.1) 0%,
+                rgba(255, 255, 255, 0.88) 45%
+            );
+        }
+        .toast.level-error {
+            border-left: 3px solid #f43f5e;
+            background-image: linear-gradient(
+                135deg,
+                rgba(244, 63, 94, 0.1) 0%,
+                rgba(255, 255, 255, 0.88) 45%
+            );
+        }
+        .toast.level-info {
+            border-left: 3px solid #0ea5e9;
+            background-image: linear-gradient(
+                135deg,
+                rgba(14, 165, 233, 0.1) 0%,
+                rgba(255, 255, 255, 0.88) 45%
+            );
+        }
+        .dark .toast.level-success {
+            background-image: linear-gradient(
+                135deg,
+                rgba(16, 185, 129, 0.2) 0%,
+                rgba(24, 24, 27, 0.86) 45%
+            );
+        }
+        .dark .toast.level-warning {
+            background-image: linear-gradient(
+                135deg,
+                rgba(245, 158, 11, 0.2) 0%,
+                rgba(24, 24, 27, 0.86) 45%
+            );
+        }
+        .dark .toast.level-error {
+            background-image: linear-gradient(
+                135deg,
+                rgba(244, 63, 94, 0.2) 0%,
+                rgba(24, 24, 27, 0.86) 45%
+            );
+        }
+        .dark .toast.level-info {
+            background-image: linear-gradient(
+                135deg,
+                rgba(14, 165, 233, 0.2) 0%,
+                rgba(24, 24, 27, 0.86) 45%
+            );
+        }
+        .toast-progress-track {
+            height: 4px;
+            background: rgba(228, 228, 231, 0.7);
+        }
+        .dark .toast-progress-track {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .toast-progress-bar {
+            border-radius: 999px;
+            transition: transform linear;
+        }
+        .nh-social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(228, 228, 231, 0.9);
+            background: rgba(255, 255, 255, 0.92);
+            color: rgb(82, 82, 91);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .nh-social-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+        }
+        .nh-social-btn:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: 2px;
+        }
+        .nh-social-btn svg {
+            width: 1.1rem;
+            height: 1.1rem;
+            display: block;
+            fill: currentColor;
+        }
+        .nh-social-btn--telegram {
+            color: #24a1de;
+        }
+        .nh-social-btn--telegram:hover {
+            background: #24a1de;
+            border-color: #24a1de;
+            color: #ffffff;
+        }
+        .nh-social-btn--github {
+            color: #24292e;
+        }
+        .nh-social-btn--github:hover {
+            background: #24292e;
+            border-color: #24292e;
+            color: #ffffff;
+        }
+        .dark .nh-social-btn {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(39, 39, 42, 0.72);
+            color: rgb(228, 228, 231);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        }
+        .dark .nh-social-btn--telegram {
+            color: #59c2f0;
+        }
+        .dark .nh-social-btn--github {
+            color: #f4f4f5;
+        }
+        .nh-bell-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform-origin: 50% 18%;
+            transition: transform 0.25s ease;
+        }
+        .nh-bell-btn:hover .nh-bell-icon {
+            transform: rotate(8deg);
+        }
+        .nh-bell-btn.is-ringing .nh-bell-icon {
+            animation: nh-bell-ring 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes nh-bell-ring {
+            0% { transform: rotate(0deg); }
+            20% { transform: rotate(14deg); }
+            45% { transform: rotate(-12deg); }
+            70% { transform: rotate(8deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
+    {% block theme_script %}
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem("theme") || "dark";
+                document.documentElement.dataset.theme = t;
+                document.documentElement.classList.toggle("dark", t === "dark");
+            } catch (e) {}
+        })();
+    </script>
+    {% endblock %}
+</head>
+<body
+    class="min-h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 {% block body_class %}{% endblock %}"
+    {% if user.is_authenticated %}
+    data-feed-cursor="{{ notify_feed_cursor|default:0 }}"
+    data-app-shell
+    {% endif %}
+>
+    {% if user.is_authenticated %}
+        <header class="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/80 backdrop-blur-xl transition-shadow dark:border-white/[0.08] dark:bg-zinc-950/75">
+            <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
+                <a href="{% url 'dashboard' %}" class="text-sm font-semibold tracking-tight text-zinc-900 transition-opacity hover:opacity-80 dark:text-white sm:text-base">
+                    NotifyHub
+                </a>
+                <div class="flex items-center gap-1 sm:gap-2">
+                    <a href="{% url 'notifications' %}" class="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Поиск по уведомлениям">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm0-2a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"/>
+                            <path d="M16.4 16.4 21 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </a>
+                    <a href="{% url 'settings' %}" class="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Настройки">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>
+                            <path d="M19.4 13.5a7.9 7.9 0 0 0 .05-1.5 7.9 7.9 0 0 0-.05-1.5l2.02-1.57a.8.8 0 0 0 .19-1.02l-1.9-3.29a.8.8 0 0 0-.96-.36l-2.38.96a8.3 8.3 0 0 0-2.6-1.5l-.36-2.52A.8.8 0 0 0 12.68 0h-3.8a.8.8 0 0 0-.79.67l-.36 2.52a8.3 8.3 0 0 0-2.6 1.5l-2.38-.96a.8.8 0 0 0-.96.36L.89 7.38a.8.8 0 0 0 .19 1.02L3.1 9.97a7.9 7.9 0 0 0-.05 1.5c0 .51.02 1.01.05 1.5L1.08 15.04a.8.8 0 0 0-.19 1.02l1.9 3.29a.8.8 0 0 0 .96.36l2.38-.96a8.3 8.3 0 0 0 2.6 1.5l.36 2.52a.8.8 0 0 0 .79.67h3.8a.8.8 0 0 0 .79-.67l.36-2.52a8.3 8.3 0 0 0 2.6-1.5l2.38.96a.8.8 0 0 0 .96-.36l1.9-3.29a.8.8 0 0 0-.19-1.02L19.4 13.5Z" opacity=".35"/>
+                        </svg>
+                    </a>
+                    <a href="https://t.me/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--telegram" aria-label="Telegram">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M22 4.01a1 1 0 0 0-1.04-.15L2.9 11.1a1 1 0 0 0 .07 1.88l4.6 1.53 1.74 5.28a1 1 0 0 0 1.72.36l2.5-2.56 4.9 3.58a1 1 0 0 0 1.57-.58L22 4.99a1 1 0 0 0 0-.98ZM9.3 14.1l8.74-7.54-6.55 8.67-.57 2.46-1.62-3.58Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--github" aria-label="GitHub">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M8 0C3.58 0 0 3.73 0 8.33c0 3.68 2.29 6.8 5.47 7.9.4.08.55-.18.55-.4 0-.2-.01-.85-.01-1.54-2.01.45-2.53-.5-2.69-.96-.09-.24-.48-.96-.82-1.16-.28-.16-.68-.56-.01-.57.63-.01 1.08.6 1.23.85.72 1.26 1.87.9 2.33.69.07-.54.28-.9.5-1.1-1.78-.2-3.64-.93-3.64-4.12 0-.91.31-1.66.82-2.24-.08-.2-.36-1.05.08-2.18 0 0 .67-.22 2.2.86A7.33 7.33 0 0 1 8 4.89c.68 0 1.36.1 2 .3 1.53-1.08 2.2-.86 2.2-.86.44 1.13.16 1.98.08 2.18.5.58.82 1.33.82 2.24 0 3.2-1.87 3.92-3.65 4.12.29.26.54.76.54 1.55 0 1.12-.01 2.02-.01 2.3 0 .22.14.49.55.4A8.35 8.35 0 0 0 16 8.33C16 3.73 12.42 0 8 0"></path>
+                        </svg>
+                    </a>
+                    <a id="header-notify-link" href="{% url 'notifications' %}" class="nh-bell-btn relative flex h-10 w-10 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Уведомления">
+                        <svg class="nh-bell-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                            <path d="M15 18H5.8A1.8 1.8 0 0 1 4 16.2c0-.7.4-1.3 1-1.6.8-.4 1.3-1.3 1.3-2.2V10a5.7 5.7 0 0 1 11.4 0v2.4c0 .9.5 1.8 1.3 2.2.6.3 1 .9 1 1.6a1.8 1.8 0 0 1-1.8 1.8H15Z"></path>
+                            <path d="M10 20a2 2 0 0 0 4 0"></path>
+                        </svg>
+                        <span
+                            id="header-notify-badge"
+                            class="absolute right-1 top-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-semibold text-white dark:bg-white dark:text-zinc-950 {% if not unread_count %}hidden{% endif %}"
+                            data-initial-count="{{ unread_count|default:0 }}"
+                        >{{ unread_count|default:0 }}</span>
+                    </a>
+                    <div class="relative shrink-0">
+                    <button id="profile-btn" type="button" class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-400 text-xs font-semibold text-white shadow-sm ring-2 ring-white transition hover:opacity-95 dark:ring-zinc-950 sm:h-10 sm:w-10 sm:text-sm" aria-label="Меню профиля" aria-expanded="false" aria-haspopup="true">
+                        {{ user.email|default:user.username|slice:":1"|upper }}
+                    </button>
+                    <div id="profile-menu" class="absolute right-0 top-full z-[60] mt-2 w-[min(calc(100vw-2rem),18rem)] overflow-hidden rounded-xl border border-zinc-200 bg-white py-2 shadow-lg ring-1 ring-black/5 dark:border-white/10 dark:bg-zinc-900 dark:ring-white/10" hidden>
+                        <div class="border-b border-zinc-100 px-4 py-3 dark:border-white/10">
+                            <div class="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ user.email }}</div>
+                            <div class="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">ID: {{ user.id }}</div>
+                        </div>
+                        <div class="flex flex-col py-1">
+                            <a href="{% url 'notifications' %}" class="px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/5">Уведомления</a>
+                            <a href="{% url 'settings' %}" class="px-4 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-white/5">Настройки</a>
+                        </div>
+                        <div class="flex items-center justify-between border-y border-zinc-100 px-4 py-3 dark:border-white/10">
+                            <span class="text-sm text-zinc-600 dark:text-zinc-400">Тёмная тема</span>
+                            <button class="switch on" type="button" id="theme-toggle" data-on="true" aria-label="Переключить тему"></button>
+                        </div>
+                        <form method="post" action="{% url 'account_logout' %}" class="p-2">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full rounded-lg py-2.5 text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10">Выйти</button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    {% endif %}
+
+    <main class="mx-auto w-full min-w-0 max-w-6xl overflow-x-hidden px-4 sm:px-6 {% if user.is_authenticated %}min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-4rem)]{% else %}flex min-h-[calc(100dvh-1rem)] flex-col justify-center py-12 sm:py-16{% endif %}">
+        <div class="{% if user.is_authenticated %}flex min-h-0 min-w-0 flex-col gap-6 py-6 sm:gap-8 sm:py-10 lg:flex-row lg:gap-10{% else %}w-full min-w-0{% endif %}">
+            {% if user.is_authenticated %}
+            <aside class="w-full shrink-0 lg:w-56 xl:w-60" aria-label="Разделы кабинета">
+                <nav class="-mx-1 flex flex-row gap-1 overflow-x-auto overscroll-x-contain px-1 pb-1 sm:gap-2 lg:sticky lg:top-20 lg:mx-0 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-0 lg:pb-0" id="app-sidebar-nav">
+                    {% with name=request.resolver_match.url_name|default:"" %}
+                    <a href="{% url 'dashboard' %}" class="flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-colors {% if name == 'dashboard' %}bg-zinc-100 font-semibold text-zinc-900 shadow-sm dark:bg-white/10 dark:text-white{% else %}text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200{% endif %}">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-200/80 text-zinc-600 dark:bg-white/10 dark:text-zinc-300" aria-hidden="true">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 13h6v8H4v-8Zm10-9h6v17h-6V4ZM4 3h6v8H4V3Z" opacity=".9"/></svg>
+                        </span>
+                        Главная
+                    </a>
+                    <a href="{% url 'notifications' %}" class="flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-colors {% if name == 'notifications' %}bg-zinc-100 font-semibold text-zinc-900 shadow-sm dark:bg-white/10 dark:text-white{% else %}text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200{% endif %}">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-200/80 text-zinc-600 dark:bg-white/10 dark:text-zinc-300" aria-hidden="true">
+                            <svg class="h-4 w-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16a2 2 0 0 0 1.985-1.75h-3.97A2 2 0 0 0 8 16m.104-14.997a1 1 0 1 0-2 0A5 5 0 0 0 3 5c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7a5 5 0 0 0-4.896-4.997"/></svg>
+                        </span>
+                        Уведомления
+                    </a>
+                    <a href="{% url 'settings' %}" class="flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-colors {% if name == 'settings' %}bg-zinc-100 font-semibold text-zinc-900 shadow-sm dark:bg-white/10 dark:text-white{% else %}text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200{% endif %}">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-200/80 text-zinc-600 dark:bg-white/10 dark:text-zinc-300" aria-hidden="true">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 13.5a7.9 7.9 0 0 0 .05-1.5 7.9 7.9 0 0 0-.05-1.5l2.02-1.57a.8.8 0 0 0 .19-1.02l-1.9-3.29a.8.8 0 0 0-.96-.36l-2.38.96a8.3 8.3 0 0 0-2.6-1.5l-.36-2.52A.8.8 0 0 0 12.68 0h-3.8a.8.8 0 0 0-.79.67l-.36 2.52a8.3 8.3 0 0 0-2.6 1.5l-2.38-.96a.8.8 0 0 0-.96.36L.89 7.38a.8.8 0 0 0 .19 1.02L3.1 9.97a7.9 7.9 0 0 0-.05 1.5c0 .51.02 1.01.05 1.5L1.08 15.04a.8.8 0 0 0-.19 1.02l1.9 3.29a.8.8 0 0 0 .96.36l2.38-.96a8.3 8.3 0 0 0 2.6 1.5l.36 2.52a.8.8 0 0 0 .79.67h3.8a.8.8 0 0 0 .79-.67l.36-2.52a8.3 8.3 0 0 0 2.6-1.5l2.38.96a.8.8 0 0 0 .96-.36l1.9-3.29a.8.8 0 0 0-.19-1.02L19.4 13.5Z" opacity=".35"/></svg>
+                        </span>
+                        Настройки
+                    </a>
+                    {% endwith %}
+                </nav>
+            </aside>
+            {% endif %}
+            <div class="min-w-0 {% if user.is_authenticated %}flex-1{% else %}w-full{% endif %}">
+                <div class="nh-django-messages w-full min-w-0 max-w-full overflow-x-hidden {% if user.is_authenticated %}mb-4 sm:mb-6{% endif %}" data-nh-messages-root>
+                    {% django_messages_json %}
+                </div>
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <section id="toast-stack" class="toast-stack" aria-live="polite" aria-relevant="additions"></section>
+    <script src="{% static 'js/app/utils.js' %}" defer></script>
+    <script src="{% static 'js/app/notifications.js' %}" defer></script>
+    <script src="{% static 'js/app/ui.js' %}" defer></script>
+    <script src="{% static 'js/app/main.js' %}" defer></script>
+</body>
+</html>

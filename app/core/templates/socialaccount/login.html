@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Continue" %} | NotifyHub{% endblock %}
+
+{% block content %}
+
+<section class="auth-page-card mx-auto w-full max-w-md rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-xl ring-1 ring-black/[0.04] dark:border-white/10 dark:bg-zinc-900 dark:shadow-soft-dark dark:ring-white/10 sm:p-10">
+    <div class="text-center text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">NotifyHub</div>
+    {% if process == "connect" %}
+        <h1 class="mt-5 text-center text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-[1.65rem]">
+            {% blocktrans with provider.name as provider %}Подключить {{ provider }}{% endblocktrans %}
+        </h1>
+        <p class="mt-2 text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {% blocktrans with provider.name as provider %}Вы подключаете внешний аккаунт {{ provider }} к профилю NotifyHub.{% endblocktrans %}
+        </p>
+    {% else %}
+        <h1 class="mt-5 text-center text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-[1.65rem]">
+            {% blocktrans with provider.name as provider %}Вход через {{ provider }}{% endblocktrans %}
+        </h1>
+        <p class="mt-2 text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {% blocktrans with provider.name as provider %}Нажмите «Продолжить», чтобы перейти к {{ provider }} и завершить вход.{% endblocktrans %}
+        </p>
+    {% endif %}
+    <form method="post" action="" class="mt-8">
+        {% csrf_token %}
+        {% if process %}
+        <input type="hidden" name="process" value="{{ process }}" />
+        {% endif %}
+        <button type="submit" class="btn btn-primary h-12 w-full text-base font-semibold">
+            {% trans "Continue" %}
+        </button>
+    </form>
+</section>
+
+{% endblock %}

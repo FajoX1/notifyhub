@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+uv.lock
+agent-transcripts
+assets

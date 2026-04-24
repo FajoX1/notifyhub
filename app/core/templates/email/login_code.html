@@ -1,0 +1,17 @@
+{% extends "email/base.html" %}
+{% block title %}Код для входа{% endblock %}
+
+{% block content %}
+
+<h1 class="email-title">Код для входа</h1>
+<p class="email-text">Используйте этот одноразовый код. Он действует {{ valid_minutes }} минут.</p>
+<div class="code">{{ code }}</div>
+<div class="panel warning">
+    <p class="panel-title">Важно</p>
+    <p class="panel-text">Никому не сообщайте этот код. Если это были не вы, смените пароль аккаунта.</p>
+</div>
+<div class="btn-wrap">
+    <a class="btn btn-primary" href="{{ site_url }}/accounts/login/">Открыть страницу входа</a>
+</div>
+
+{% endblock %}

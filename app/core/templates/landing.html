@@ -1,0 +1,362 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" class="h-full scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#09090b">
+    <title>NotifyHub — уведомления в реальном времени</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/ui.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities/core.css' %}">
+    <style>
+        html[data-theme="dark"] .landing-top,
+        html[data-theme="dark"] .landing-foot {
+            background-color: rgba(9, 9, 11, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        html[data-theme="light"] .landing-top,
+        html[data-theme="light"] .landing-foot {
+            background-color: rgba(255, 255, 255, 0.86);
+            border-color: rgba(228, 228, 231, 0.8);
+        }
+        html[data-theme="dark"] .landing-surface {
+            background-color: rgba(24, 24, 27, 0.7);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+        html[data-theme="light"] .landing-surface {
+            background-color: #ffffff;
+            border-color: #e4e4e7;
+            box-shadow: 0 12px 28px rgba(24, 24, 27, 0.08);
+        }
+        .landing-accent {
+            color: #2563eb;
+        }
+        html[data-theme="dark"] .landing-accent {
+            color: #7dd3fc;
+        }
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+            .landing-accent {
+                background-image: linear-gradient(
+                    90deg,
+                    #4338ca 0%,
+                    #2563eb 45%,
+                    #0891b2 100%
+                );
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                -webkit-text-fill-color: transparent;
+            }
+            html[data-theme="dark"] .landing-accent {
+                background-image: linear-gradient(
+                    90deg,
+                    #818cf8 0%,
+                    #60a5fa 45%,
+                    #67e8f9 100%
+                );
+            }
+        }
+        .nh-social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(228, 228, 231, 0.9);
+            background: rgba(255, 255, 255, 0.92);
+            color: rgb(82, 82, 91);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .nh-social-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+        }
+        .nh-social-btn svg {
+            width: 1rem;
+            height: 1rem;
+            display: block;
+            fill: currentColor;
+        }
+        .nh-social-btn--telegram {
+            color: #24a1de;
+        }
+        .nh-social-btn--telegram:hover {
+            background: #24a1de;
+            border-color: #24a1de;
+            color: #fff;
+        }
+        .nh-social-btn--github {
+            color: #24292e;
+        }
+        .nh-social-btn--github:hover {
+            background: #24292e;
+            border-color: #24292e;
+            color: #fff;
+        }
+        html[data-theme="dark"] .nh-social-btn {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(39, 39, 42, 0.72);
+            color: rgb(228, 228, 231);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
+        }
+        html[data-theme="dark"] .nh-social-btn--telegram {
+            color: #59c2f0;
+        }
+        html[data-theme="dark"] .nh-social-btn--github {
+            color: #f4f4f5;
+        }
+    </style>
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem("theme");
+                var theme = saved === "light" || saved === "dark" ? saved : "dark";
+                document.documentElement.classList.toggle("dark", theme === "dark");
+                document.documentElement.dataset.theme = theme;
+            } catch (e) {
+                document.documentElement.classList.add("dark");
+                document.documentElement.dataset.theme = "dark";
+            }
+        })();
+    </script>
+</head>
+<body class="landing-body relative min-h-full overflow-x-hidden bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
+    <div class="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(79,70,229,0.14),transparent_55%),radial-gradient(ellipse_80%_50%_at_100%_0%,rgba(2,132,199,0.08),transparent_50%),radial-gradient(ellipse_60%_40%_at_0%_100%,rgba(79,70,229,0.06),transparent_45%)] dark:bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(99,102,241,0.22),transparent_55%),radial-gradient(ellipse_80%_50%_at_100%_0%,rgba(56,189,248,0.12),transparent_50%),radial-gradient(ellipse_60%_40%_at_0%_100%,rgba(99,102,241,0.08),transparent_45%)]"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.03%22/%3E%3C/svg%3E')] opacity-40 dark:opacity-70"></div>
+    </div>
+
+    <header class="landing-top sticky top-0 z-50 border-b border-zinc-200/80 bg-white/80 backdrop-blur-xl dark:border-white/[0.06] dark:bg-zinc-950/70">
+        <div class="landing-container landing-top-row mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
+            <a href="{% url 'home' %}" class="landing-logo text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">NotifyHub</a>
+            <nav class="landing-nav flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-6" aria-label="Сайт">
+                <a class="landing-nav-mute text-sm text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white" href="#features-bento">О продукте</a>
+                <div class="landing-nav-cta flex flex-wrap items-center gap-2 sm:gap-3">
+                    <a href="https://t.me/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--telegram" aria-label="Telegram">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M22 4.01a1 1 0 0 0-1.04-.15L2.9 11.1a1 1 0 0 0 .07 1.88l4.6 1.53 1.74 5.28a1 1 0 0 0 1.72.36l2.5-2.56 4.9 3.58a1 1 0 0 0 1.57-.58L22 4.99a1 1 0 0 0 0-.98ZM9.3 14.1l8.74-7.54-6.55 8.67-.57 2.46-1.62-3.58Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--github" aria-label="GitHub">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M8 0C3.58 0 0 3.73 0 8.33c0 3.68 2.29 6.8 5.47 7.9.4.08.55-.18.55-.4 0-.2-.01-.85-.01-1.54-2.01.45-2.53-.5-2.69-.96-.09-.24-.48-.96-.82-1.16-.28-.16-.68-.56-.01-.57.63-.01 1.08.6 1.23.85.72 1.26 1.87.9 2.33.69.07-.54.28-.9.5-1.1-1.78-.2-3.64-.93-3.64-4.12 0-.91.31-1.66.82-2.24-.08-.2-.36-1.05.08-2.18 0 0 .67-.22 2.2.86A7.33 7.33 0 0 1 8 4.89c.68 0 1.36.1 2 .3 1.53-1.08 2.2-.86 2.2-.86.44 1.13.16 1.98.08 2.18.5.58.82 1.33.82 2.24 0 3.2-1.87 3.92-3.65 4.12.29.26.54.76.54 1.55 0 1.12-.01 2.02-.01 2.3 0 .22.14.49.55.4A8.35 8.35 0 0 0 16 8.33C16 3.73 12.42 0 8 0"></path>
+                        </svg>
+                    </a>
+                    <button id="landing-theme-toggle" type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/15 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:bg-white/[0.08] dark:hover:text-white" aria-label="Переключить тему">
+                        <svg id="landing-theme-icon-sun" class="h-4 w-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" stroke-linecap="round"></path>
+                        </svg>
+                        <svg id="landing-theme-icon-moon" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M20.2 14.1A8.7 8.7 0 0 1 9.9 3.8a.75.75 0 0 0-.99-.9A10 10 0 1 0 21.1 15a.75.75 0 0 0-.9-.99Z"></path>
+                        </svg>
+                    </button>
+                    {% if user.is_authenticated %}
+                        <span class="landing-who max-w-[200px] truncate text-xs text-zinc-500 sm:max-w-xs sm:text-sm dark:text-zinc-500" title="">{{ user.email|default:user.username }}</span>
+                        <a class="btn btn-ghost rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-white/10 dark:text-zinc-200 dark:hover:border-white/20 dark:hover:bg-white/5" href="{% url 'dashboard' %}">В кабинет</a>
+                        <form class="landing-logout inline" method="post" action="{% url 'account_logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline rounded-xl border border-zinc-300 bg-transparent px-4 py-2 text-sm text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-white/15 dark:text-zinc-200 dark:hover:border-white/25 dark:hover:bg-white/5">Выйти</button>
+                        </form>
+                    {% else %}
+                        <a class="rounded-xl px-4 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white" href="{% url 'account_login' %}">Войти</a>
+                        <a class="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100" href="{% url 'account_signup' %}">Регистрация</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="landing-content">
+        <div class="landing-container landing-hero mx-auto grid max-w-6xl gap-12 px-4 pb-16 pt-10 sm:gap-16 sm:px-6 sm:pb-24 sm:pt-16 lg:grid-cols-2 lg:items-center" id="top">
+            <div class="landing-hero-text min-w-0">
+                <p class="landing-pill inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400">WebSocket · Redis · Django</p>
+                <h1 class="landing-h1 mt-6 text-3xl font-semibold leading-[1.15] tracking-tight text-zinc-900 dark:text-white sm:text-4xl lg:text-5xl">
+                    Единая платформа <span class="landing-accent">уведомлений</span><span class="text-zinc-800 dark:text-zinc-100"> — </span><span id="dynamic-word" class="landing-accent inline-block min-w-[11ch] transition-opacity duration-300 ease-out sm:min-w-[16ch]">просто</span>
+                </h1>
+                <p class="landing-sub mt-5 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-lg">События в браузер в реальном времени, инбокс в Redis с TTL, отправка из админки и настройки каналов для пользователей.</p>
+                <div class="landing-actions mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    {% if user.is_authenticated %}
+                        <a class="landing-btn-xl inline-flex h-12 items-center justify-center rounded-xl bg-zinc-900 px-6 text-sm font-semibold text-white shadow-glow transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100" href="{% url 'dashboard' %}">За работу</a>
+                        <a class="landing-btn-xl inline-flex h-12 items-center justify-center rounded-xl border border-zinc-300 bg-white px-6 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-white dark:hover:border-white/25 dark:hover:bg-white/[0.08]" href="{% url 'notifications' %}">К ленте</a>
+                    {% else %}
+                        <a class="landing-btn-xl inline-flex h-12 items-center justify-center rounded-xl bg-zinc-900 px-6 text-sm font-semibold text-white shadow-glow transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100" href="{% url 'account_signup' %}">Создать аккаунт</a>
+                        <a class="landing-btn-xl inline-flex h-12 items-center justify-center rounded-xl border border-zinc-300 bg-white px-6 text-sm font-medium text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-white/15 dark:bg-white/[0.04] dark:text-white dark:hover:border-white/25 dark:hover:bg-white/[0.08]" href="{% url 'account_login' %}">Войти</a>
+                    {% endif %}
+                </div>
+                <ul class="landing-bullets mt-10 space-y-3 text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">
+                    <li class="flex gap-3"><span class="landing-dot mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-indigo-600 to-sky-600 dark:from-indigo-400 dark:to-sky-400" aria-hidden="true"></span> Realtime-канал без лишнего дребезжания в DOM</li>
+                    <li class="flex gap-3"><span class="landing-dot mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-indigo-600 to-sky-600 dark:from-indigo-400 dark:to-sky-400" aria-hidden="true"></span> Короткоживущий инбокс: меньше мусора в БД</li>
+                    <li class="flex gap-3"><span class="landing-dot mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-indigo-600 to-sky-600 dark:from-indigo-400 dark:to-sky-400" aria-hidden="true"></span> DND, каналы, почта — в одной панели настроек</li>
+                </ul>
+            </div>
+            <div class="landing-hero-viz hidden md:block" aria-hidden="true">
+                <div class="landing-mock landing-surface overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-200/70 ring-1 ring-zinc-200/70 backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/40 dark:shadow-black/40 dark:ring-white/5">
+                    <div class="landing-mock-chrome flex items-center gap-2 border-b border-zinc-200 px-4 py-3 dark:border-white/10">
+                        <span class="landing-dot-r h-2.5 w-2.5 rounded-full bg-rose-500/80"></span><span class="landing-dot-r h-2.5 w-2.5 rounded-full bg-amber-500/80"></span><span class="landing-dot-r h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+                        <span class="landing-mock-title ml-2 flex-1 truncate text-center text-[11px] font-medium text-zinc-500 dark:text-zinc-500">app.notifyhub · dashboard</span>
+                    </div>
+                    <div class="landing-mock-body space-y-3 p-4">
+                        <div class="landing-mock-row level-info flex gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                            <span class="landing-mock-dot mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-400"></span>
+                            <div>
+                                <div class="landing-mock-line strong text-sm font-medium text-zinc-900 dark:text-zinc-100">Системное обновление</div>
+                                <div class="landing-mock-line muted text-xs text-zinc-500 dark:text-zinc-500">Все сервисы в норме.</div>
+                            </div>
+                        </div>
+                        <div class="landing-mock-row level-success flex gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                            <span class="landing-mock-dot mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-400"></span>
+                            <div>
+                                <div class="landing-mock-line strong text-sm font-medium text-zinc-900 dark:text-zinc-100">Событие доставлено</div>
+                                <div class="landing-mock-line muted text-xs text-zinc-500 dark:text-zinc-500">WebSocket: OK</div>
+                            </div>
+                        </div>
+                        <div class="landing-mock-row level-warning flex gap-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/[0.06] dark:bg-white/[0.03]">
+                            <span class="landing-mock-dot mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-400"></span>
+                            <div>
+                                <div class="landing-mock-line strong text-sm font-medium text-zinc-900 dark:text-zinc-100">Предупреждение</div>
+                                <div class="landing-mock-line muted text-xs text-zinc-500 dark:text-zinc-500">Проверьте настройки почты</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-container mx-auto max-w-6xl px-4 sm:px-6">
+            <div class="landing-band landing-surface flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.03] dark:shadow-soft-dark sm:flex-row sm:items-stretch sm:justify-between sm:gap-6 sm:p-8">
+                <div class="landing-stat flex flex-1 flex-col gap-1 border-b border-zinc-200 pb-4 dark:border-white/10 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-8">
+                    <span class="landing-stat-val text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Мгновенный фидбек</span>
+                    <span class="landing-stat-txt text-sm text-zinc-500 dark:text-zinc-500">Новые события сразу всплывают в интерфейсе без перезагрузки страницы.</span>
+                </div>
+                <div class="landing-stat flex flex-1 flex-col gap-1 border-b border-zinc-200 pb-4 dark:border-white/10 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-8">
+                    <span class="landing-stat-val text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Управление из админки</span>
+                    <span class="landing-stat-txt text-sm text-zinc-500 dark:text-zinc-500">Отправляйте сообщения вручную или через Celery-задачи с очередями.</span>
+                </div>
+                <div class="landing-stat flex flex-1 flex-col gap-1">
+                    <span class="landing-stat-val text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Чистая история событий</span>
+                    <span class="landing-stat-txt text-sm text-zinc-500 dark:text-zinc-500">Лента аккуратно хранит статус прочтения и остаётся удобной для разбора.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-container landing-bento-wrap mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24" id="features-bento">
+            <h2 class="landing-h2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Почему NotifyHub</h2>
+            <div class="landing-bento mt-8 grid gap-4 md:grid-cols-2 lg:gap-6">
+                <article class="landing-tile landing-surface flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:border-zinc-300 hover:shadow-md dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/15">
+                    <div class="landing-ico mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">Мгновенно</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">WebSocket: новые уведомления появляются сразу, без опроса каждые секунды.</p>
+                </article>
+                <article class="landing-tile landing-surface flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:border-zinc-300 hover:shadow-md dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/15">
+                    <div class="landing-ico mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/15 text-sky-300" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="12" cy="6" rx="7" ry="3" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M5 6v6c0 1.5 2.2 2.5 7 2.5s7-1 7-2.5V6" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M5 12v6c0 1.5 2.2 2.5 7 2.5s7-1 7-2.5v-6" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">Redis</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Онлайн-инбокс с истечением срока: меньше нагрузка на PostgreSQL, предсказуемое хранение.</p>
+                </article>
+                <article class="landing-tile landing-tile-wide landing-surface flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:border-zinc-300 hover:shadow-md dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/15 md:col-span-2">
+                    <div class="landing-ico mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">Админка Django</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">Отправка вручную, фильтры, очереди через Celery — привычный для команды сценарий, без костылей в коде.</p>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer class="landing-foot border-t border-zinc-200/80 bg-white/80 py-8 backdrop-blur-sm dark:border-white/[0.06] dark:bg-zinc-950/80">
+        <div class="landing-container landing-foot-row mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-4 pr-8 sm:flex-row sm:items-center sm:px-6 sm:pr-8">
+            <span class="landing-foot-name text-sm font-semibold text-zinc-900 dark:text-white">NotifyHub</span>
+            <div class="landing-foot-links ml-auto flex flex-wrap items-center justify-end gap-6 text-sm text-zinc-500 dark:text-zinc-500">
+                <a href="https://t.me/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--telegram" aria-label="Telegram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M22 4.01a1 1 0 0 0-1.04-.15L2.9 11.1a1 1 0 0 0 .07 1.88l4.6 1.53 1.74 5.28a1 1 0 0 0 1.72.36l2.5-2.56 4.9 3.58a1 1 0 0 0 1.57-.58L22 4.99a1 1 0 0 0 0-.98ZM9.3 14.1l8.74-7.54-6.55 8.67-.57 2.46-1.62-3.58Z"></path>
+                    </svg>
+                </a>
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="nh-social-btn nh-social-btn--github" aria-label="GitHub">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M8 0C3.58 0 0 3.73 0 8.33c0 3.68 2.29 6.8 5.47 7.9.4.08.55-.18.55-.4 0-.2-.01-.85-.01-1.54-2.01.45-2.53-.5-2.69-.96-.09-.24-.48-.96-.82-1.16-.28-.16-.68-.56-.01-.57.63-.01 1.08.6 1.23.85.72 1.26 1.87.9 2.33.69.07-.54.28-.9.5-1.1-1.78-.2-3.64-.93-3.64-4.12 0-.91.31-1.66.82-2.24-.08-.2-.36-1.05.08-2.18 0 0 .67-.22 2.2.86A7.33 7.33 0 0 1 8 4.89c.68 0 1.36.1 2 .3 1.53-1.08 2.2-.86 2.2-.86.44 1.13.16 1.98.08 2.18.5.58.82 1.33.82 2.24 0 3.2-1.87 3.92-3.65 4.12.29.26.54.76.54 1.55 0 1.12-.01 2.02-.01 2.3 0 .22.14.49.55.4A8.35 8.35 0 0 0 16 8.33C16 3.73 12.42 0 8 0"></path>
+                    </svg>
+                </a>
+                <a class="transition hover:text-zinc-900 dark:hover:text-white" href="/admin/">Django admin</a>
+                <a class="transition hover:text-zinc-900 dark:hover:text-white" href="{% url 'account_login' %}">Войти</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        (function () {
+            var el = document.getElementById("dynamic-word");
+            var words = ["в одном месте", "просто", "надёжно", "мгновенно"];
+            var i = 0;
+            var periodMs = 2900;
+            var fadeMs = 280;
+
+            function cycle() {
+                if (!el) return;
+                el.style.opacity = "0";
+                window.setTimeout(function () {
+                    i = (i + 1) % words.length;
+                    el.textContent = words[i];
+                    el.style.opacity = "1";
+                }, fadeMs);
+            }
+
+            if (el) {
+                window.setInterval(cycle, periodMs);
+            }
+
+            var root = document.documentElement;
+            var toggle = document.getElementById("landing-theme-toggle");
+            var sunIcon = document.getElementById("landing-theme-icon-sun");
+            var moonIcon = document.getElementById("landing-theme-icon-moon");
+
+            function applyTheme(theme) {
+                root.classList.toggle("dark", theme === "dark");
+                root.dataset.theme = theme;
+                try {
+                    localStorage.setItem("theme", theme);
+                } catch (e) {}
+                if (sunIcon && moonIcon) {
+                    sunIcon.classList.toggle("hidden", theme === "dark");
+                    moonIcon.classList.toggle("hidden", theme !== "dark");
+                }
+            }
+
+            if (toggle) {
+                var savedTheme = "dark";
+                try {
+                    var raw = localStorage.getItem("theme");
+                    if (raw === "light" || raw === "dark") {
+                        savedTheme = raw;
+                    }
+                } catch (e) {}
+                applyTheme(savedTheme);
+                toggle.addEventListener("click", function () {
+                    var nextTheme = root.classList.contains("dark") ? "light" : "dark";
+                    applyTheme(nextTheme);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

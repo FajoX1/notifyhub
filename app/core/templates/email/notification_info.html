@@ -1,0 +1,34 @@
+{% extends "email/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h1 class="email-title">{{ title }}</h1>
+<p class="email-text">{{ message }}</p>
+{% if level == "success" %}
+<div class="panel">
+    <p class="panel-title">Статус</p>
+    <p class="panel-text">Успешно выполнено.</p>
+</div>
+{% elif level == "warning" %}
+<div class="panel warning">
+    <p class="panel-title">Статус</p>
+    <p class="panel-text">Требуется внимание.</p>
+</div>
+{% elif level == "error" %}
+<div class="panel error">
+    <p class="panel-title">Статус</p>
+    <p class="panel-text">Обнаружена ошибка.</p>
+</div>
+{% else %}
+<div class="panel info">
+    <p class="panel-title">Статус</p>
+    <p class="panel-text">Информационное уведомление.</p>
+</div>
+{% endif %}
+<div class="btn-wrap">
+    <a class="btn btn-primary" href="{{ site_url }}/notifications/">Открыть уведомления</a>
+    <a class="btn btn-secondary" href="{{ site_url }}/dashboard/">Кабинет</a>
+</div>
+
+{% endblock %}

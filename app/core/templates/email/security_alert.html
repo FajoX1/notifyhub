@@ -1,0 +1,19 @@
+{% extends "email/base.html" %}
+{% block title %}Security Alert{% endblock %}
+
+{% block content %}
+
+<h1 class="email-title">Новый вход в аккаунт</h1>
+<p class="email-text">Мы зафиксировали вход в аккаунт{% if username %} {{ username }}{% endif %}. Если это были вы, ничего делать не нужно.</p>
+<div class="panel warning">
+    <p class="panel-title">Детали входа</p>
+    <p class="panel-text">Время: {{ login_time }}</p>
+    <p class="panel-text">IP: {{ ip_address }}</p>
+    <p class="panel-text">Устройство: {{ user_agent }}</p>
+</div>
+<p class="email-text">Если это были не вы, немедленно смените пароль и проверьте настройки безопасности.</p>
+<div class="btn-wrap">
+    <a class="btn btn-primary" href="{{ security_url }}">Проверить безопасность</a>
+</div>
+
+{% endblock %}

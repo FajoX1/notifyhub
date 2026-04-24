@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/base/reset.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/utilities/core.css' %}">
+<style>
+  .nh-admin-card {
+    border: 1px solid var(--hairline-color);
+    background: var(--body-bg);
+    color: var(--body-fg);
+    border-radius: 12px;
+  }
+  .nh-admin-muted {
+    color: var(--body-quiet-color);
+  }
+  .nh-admin-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 0 18px;
+    height: 40px;
+    cursor: pointer;
+    background: var(--button-bg);
+    color: var(--button-fg);
+    transition: opacity 0.15s ease;
+  }
+  .nh-admin-btn:hover {
+    opacity: 0.9;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <div id="content-main" class="max-w-3xl">
+    <div class="nh-admin-card nh-admin-muted mb-6 px-5 py-4 text-sm leading-relaxed shadow-sm">
+      Отправка через Celery включена по умолчанию: уведомление появится, когда запущен <code class="rounded px-1.5 py-0.5 font-mono text-xs" style="background: var(--darkened-bg); color: var(--body-fg);">celery-worker</code>.
+      Для мгновенной отправки отключи галку.
+    </div>
+    <form method="post" novalidate class="nh-admin-card p-5 shadow-sm sm:p-6">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="submit-row mt-6 flex flex-wrap gap-3 pt-5" style="border-top: 1px solid var(--hairline-color);">
+        <input type="submit" value="Отправить" class="default nh-admin-btn inline-flex items-center justify-center text-sm font-medium">
+      </div>
+    </form>
+  </div>
+{% endblock %}
